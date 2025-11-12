@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Changement de paragraphe avec jQuery</title>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<style>
+  #message1 {
+    position: absolute;      
+    left: -300px;           
+    font-size: 50px;        
+    display: none; 
+  }
+
+  #defile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 20px 0;
+  }
+
+  #defile div {
+    display: none;
+    margin: 10px 0;
+    position: relative;
+    overflow: hidden;
+    width: 60%;           
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+
+  #defile img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    position: relative;
+    left: 0;
+  }
+</style>
+
+</head>
+
+<body>
+
+  <p id="paragraphe">Ceci est un paragraphe</p>
+  
+  <header>
+  </header>
+
+  <div id="centre" style="border: 2px solid red;">
+    <p>Cliquez ici</p>
+  </div>
+
+  <footer>
+  </footer>
+
+  <ul id="liste">
+    <li>premier element</li>
+    <li>deuxieme element</li>
+    <li>troisieme element</li>
+  </ul>
+
+  <button id="affichage">Afficher</button>
+
+  <h1 id="message1">Bonjour</h1>
+  <button id="animate">Bienvenue</button>
+
+  <div id="defile">
+  <div>
+    <img src="Capture d'écran 2025-10-26 154546.png" alt="Image 1"/>
+  </div>
+  
+  <div>
+    <img src="Capture d'écran 2025-11-05 000030.png" alt="Image 2"/>
+  </div>
+    <div>
+    <img src="Capture d'écran 2025-10-27 002914.png" alt="Image 3"/>
+  </div>
+</div>
+
+<button id="suivant">Suivant</button>
+
+<div style="margin-top: 20px;">
+  <label>Choisir l'effet de transition :</label><br>
+  <input type="radio" name="effet" value="fade" checked> Fade (disparition/apparition progressive)
+  <input type="radio" name="effet" value="slide"> Slide (déroulement vertical)
+  <input type="radio" name="effet" value="animLR"> Animate (gauche → droite avec animate())
+</div>
+
+<script>
+$(document).ready(function() {
+
+  //pour qu il affiche la premier image de index 0 par defaut
+  var images = $("#defile img");
+  var currentIndex = 0;
+  images.eq(0).parent().show();
+  images.eq(0).show();
+  var effectChoisi = "fade"; // Effet par defaut
+
+
+  function afficherImageSuivante() {
+    if (effectChoisi === "fade") {
+      images.eq(currentIndex).fadeOut(1000, function() {
+        images.eq(currentIndex).parent().hide();
+
+        currentIndex = (currentIndex + 1) % images.length;
+
+        images.eq(currentIndex).parent().show();
+        images.eq(currentIndex).fadeIn(1000);
+      });
+    } else if (effectChoisi === "slide") {
+      images.eq(currentIndex).slideUp(1000, function() {
+        images.eq(currentIndex).parent().hide();
+
+        currentIndex = (currentIndex + 1) % images.length;
+
+        images.eq(currentIndex).parent().show();
+        images.eq(currentIndex).slideDown(1000);
+      });
+    } else if (effectChoisi === "animLR") {
+    
+      var $currentImg = images.eq(currentIndex);
+      var $currentParent = $currentImg.parent();
+      var winW = $(window).width();
+
+  
+      $currentImg.animate({ left: -winW }, 1000, function() {
+      
+        $currentParent.hide();
+     
+        $currentImg.css('left', 0);
+
+       
+        currentIndex = (currentIndex + 1) % images.length;
+
+      
+        var $nextImg = images.eq(currentIndex);
+        var $nextParent = $nextImg.parent();
+        $nextParent.show();
+   
+        $nextImg.css('left', winW);
+       
+        $nextImg.animate({ left: 0 }, 1000);
+      });
+    }
+  }
+
+  // Bouton "Suivant"
+  $("#suivant").click(function() {
+    afficherImageSuivante();
+  });
+
+  // Gestionnaire pour changer l'effet
+  $('input[name="effet"]').change(function() {
+    effectChoisi = $(this).val();
+  });
+
+  
+  setInterval(afficherImageSuivante, 5000);
+
+  
+    $("#paragraphe").hover(function() {
+        $(this).text("Ceci n’est pas un paragraphe");
+    });
+
+ 
+    $("#centre").hover(function() {
+        console.log("Attention, vous entrez dans la zone rouge");
+    });
+
+ 
+    $("#centre").mousedown(function() {
+        $(this).css("border", "2px solid green");
+        $("header").append('<span style="color: green;"> up</span>');
+    });
+
+    $("#centre").mouseup(function() {
+        $(this).css("border", "2px solid red");
+        $("footer").append('<span style="color: red;"> down</span>');
+    });
+
+    
+    $("header").on("click", function() {
+        $(this).find("span:first").remove();
+    });
+    $("footer").on("click", function() {
+        $(this).find("span:first").remove();
+    });
+
+    
+    $("#liste").hide();
+    $("#affichage").click(function() {
+        if ($(this).text() === "Afficher") {
+            $("#liste").slideDown();
+            $(this).text("Masquer");
+        } else {
+            $("#liste").slideUp();
+            $(this).text("Afficher");
+        }
+    });
+
+ 
+    $("#animate").click(function() {
+       
+        $("#message1").css({left: '-300px', display: 'block'});
+        $("#message1").animate(
+            { left: $(window).width() + 50 }, 
+            5000, 
+            function() {
+                $(this).hide(); 
+            }
+        );
+    });
+
+});
+</script>
+
+</body>
+</html>
