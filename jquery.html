@@ -7,8 +7,7 @@
 <style>
   #message1 {
     position: absolute;      
-    left: -300px;           
-    font-size: 50px;        
+    left: -300px;                
     display: none; 
   }
 
@@ -93,73 +92,6 @@
 <script>
 $(document).ready(function() {
 
-  //pour qu il affiche la premier image de index 0 par defaut
-  var images = $("#defile img");
-  var currentIndex = 0;
-  images.eq(0).parent().show();
-  images.eq(0).show();
-  var effectChoisi = "fade"; // Effet par defaut
-
-
-  function afficherImageSuivante() {
-    if (effectChoisi === "fade") {
-      images.eq(currentIndex).fadeOut(1000, function() {
-        images.eq(currentIndex).parent().hide();
-
-        currentIndex = (currentIndex + 1) % images.length;
-
-        images.eq(currentIndex).parent().show();
-        images.eq(currentIndex).fadeIn(1000);
-      });
-    } else if (effectChoisi === "slide") {
-      images.eq(currentIndex).slideUp(1000, function() {
-        images.eq(currentIndex).parent().hide();
-
-        currentIndex = (currentIndex + 1) % images.length;
-
-        images.eq(currentIndex).parent().show();
-        images.eq(currentIndex).slideDown(1000);
-      });
-    } else if (effectChoisi === "animLR") {
-    
-      var $currentImg = images.eq(currentIndex);
-      var $currentParent = $currentImg.parent();
-      var winW = $(window).width();
-
-  
-      $currentImg.animate({ left: -winW }, 1000, function() {
-      
-        $currentParent.hide();
-     
-        $currentImg.css('left', 0);
-
-       
-        currentIndex = (currentIndex + 1) % images.length;
-
-      
-        var $nextImg = images.eq(currentIndex);
-        var $nextParent = $nextImg.parent();
-        $nextParent.show();
-   
-        $nextImg.css('left', winW);
-       
-        $nextImg.animate({ left: 0 }, 1000);
-      });
-    }
-  }
-
-  // Bouton "Suivant"
-  $("#suivant").click(function() {
-    afficherImageSuivante();
-  });
-
-  // Gestionnaire pour changer l'effet
-  $('input[name="effet"]').change(function() {
-    effectChoisi = $(this).val();
-  });
-
-  
-  setInterval(afficherImageSuivante, 5000);
 
   
     $("#paragraphe").hover(function() {
@@ -214,6 +146,75 @@ $(document).ready(function() {
             }
         );
     });
+
+  //partie 6
+  
+  var images = $("#defile img");
+  var currentIndex = 0;
+  images.eq(0).parent().show();
+  images.eq(0).show();
+  var effectChoisi = "fade"; 
+
+  function afficherImageSuivante() {
+    if (effectChoisi === "fade") {
+      images.eq(currentIndex).fadeOut(1000, function() {
+        images.eq(currentIndex).parent().hide();
+
+        currentIndex = (currentIndex + 1) % images.length;
+
+        images.eq(currentIndex).parent().show();
+        images.eq(currentIndex).fadeIn(1000);
+      });
+    } else if (effectChoisi === "slide") {
+      images.eq(currentIndex).slideUp(1000, function() {
+        images.eq(currentIndex).parent().hide();
+
+        currentIndex = (currentIndex + 1) % images.length;
+
+        images.eq(currentIndex).parent().show();
+        images.eq(currentIndex).slideDown(1000);
+      });
+    } else if (effectChoisi === "animLR") {
+    
+      var $currentImg = images.eq(currentIndex);
+      var $currentParent = $currentImg.parent();
+      var winW = $(window).width();
+
+  
+      $currentImg.animate({ left: -winW }, 1000, function() {
+      
+        $currentParent.hide();
+     
+        $currentImg.css('left', 0);
+
+       
+        currentIndex = (currentIndex + 1) % images.length;
+
+      
+        var $nextImg = images.eq(currentIndex);
+        var $nextParent = $nextImg.parent();
+        $nextParent.show();
+   
+        $nextImg.css('left', winW);
+       
+        $nextImg.animate({ left: 0 }, 1000);
+      });
+    }
+  }
+
+
+  $("#suivant").click(function() {
+    afficherImageSuivante();
+  });
+
+  // Gestionnaire pour changer l'effet
+  $('input[name="effet"]').change(function() {
+    effectChoisi = $(this).val();
+  });
+
+  
+  setInterval(afficherImageSuivante, 5000);
+
 
 });
 </script>

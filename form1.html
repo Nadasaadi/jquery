@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    form {
+      width: 450px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 28px;
+    }
+
+    label {
+      display: inline-block;
+      width: 180px;
+      margin-bottom: 8px;
+    }
+
+    input, select, textarea {
+      width: 220px;
+      padding: 4px;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      resize: none;
+      height: 40px;
+    }
+
+    .erreur {
+      border: 1px solid red;
+      background-color: #ffe6e6;
+    }
+
+    .boutons {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    button {
+      margin: 3px;
+      padding: 4px 10px;
+    }
+
+    #message {
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <form>
+    <h1>Formulaire d'inscription</h1>
+
+    <label>État civil :</label>
+    <select required>
+      <option value="M.">M.</option>
+      <option value="Mme">Mme</option>
+    </select><br>
+
+    <label>Nom :</label>
+    <input type="text" required><br>
+
+    <label>Prénom :</label>
+    <input type="text" required><br>
+
+    <label>Nom complet :</label>
+    <input type="text" disabled><br>
+
+  <!--adapté a la question C -->
+    <label>Date de naissance :</label>
+    <input type="date" min="1925-11-12" max="2025-11-12" required><br>
+    <!-- avec l utilisation du js on doit remove max et min attributs-->
+
+
+    <label>Niveau en JavaScript :</label>
+    <input type="range" min="0" max="10" value="5"><span style="margin-left: 5px; color: blue;">5</span><br>
+
+    <label>Couleur préférée :</label>
+    <input type="color" value="#000000"><br>
+
+    <label>Mot de passe :</label>
+    <input type="password" id="mdp1" required><br>
+
+    <label>Mot de passe (confirmation) :</label>
+    <input type="password" id="mdp2" required><br>
+
+    <label>Afficher mot de passe :</label>
+    <input type="checkbox" id="afficher"><br>
+
+    <label>Description :</label>
+    <textarea></textarea><br>
+
+    <div class="boutons">
+      <button type="reset">Réinitialiser</button>
+      <button type="submit" disabled>Envoyer</button>
+    </div>
+  </form>
+
+  <div id="message"></div>
+
+  <script>
+    $(document).ready(function() {
+
+      //Limiter la date avec js pour la question L
+      let d = new Date();
+      let annee = d.getFullYear();
+      let mois = String(d.getMonth() + 1).padStart(2, "0");
+      let jour = String(d.getDate()).padStart(2, "0");
+      let max = `${annee}-${mois}-${jour}`;
+      let min = `${annee - 100}-${mois}-${jour}`;
+      $("input[type='date']").attr({ min: min, max: max });
+
+      
+      
+// Maj du nom complet
+      $("select, input[type='text']").on("input change", function() {
+        let civ = $("select").val();
+        let nom = $("input[type='text']").eq(0).val();
+        let prenom = $("input[type='text']").eq(1).val();
+        $("input[disabled]").val(nom && prenom ? `${civ} ${prenom} ${nom}` : "");
+      });
+
+ //range
+      $("input[type='range']").on("input", function() {
+        $(this).next("span").text($(this).val());
+      });
+
+ //mot de passe
+      $("#afficher").change(function() {
+       let type = $(this).is(":checked") ? "text" : "password";
+  $("#mdp1, #mdp2").attr("type", type);
+});
+
+//verification
+      function verifier() {
+        let ok = true;
+
+        $("input[required], select[required]").each(function() {
+          if (!$(this).val()) {
+            $(this).addClass("erreur");
+            ok = false;
+          } else {
+            $(this).removeClass("erreur");
+          }
+        });
+
+        let mdp1 = $("#mdp1").val();
+        let mdp2 = $("#mdp2").val();
+        if (mdp1 !== mdp2 || !mdp1) {
+          $("input[type='password']").eq(1).addClass("erreur");
+          ok = false;
+        } else {
+          $("input[type='password']").eq(1).removeClass("erreur");
+        }
+
+        $("button[type='submit']").prop("disabled", !ok);
+      }
+
+      $("input, select, textarea").on("input change", verifier);
+
+
+//submit form
+      $("form").on("submit", function(e) {
+        e.preventDefault();
+
+        let civ = $("select").val();
+        let nom = $("input[type='text']").eq(0).val();
+        let prenom = $("input[type='text']").eq(1).val();
+        let date = $("input[type='date']").val();
+        let niveau = $("input[type='range']").val();
+        let couleur = $("input[type='color']").val();
+        let desc = $("textarea").val();
+
+        $(this).hide();
+        $("#message").html(`
+          Bonjour <b>${civ} ${prenom} ${nom}</b>, vous êtes né le <b>${date}</b>.<br>
+          Niveau JavaScript : <b>${niveau}</b><br>
+          Couleur préférée : <span style="color:${couleur}">${couleur}</span><br>
+          Description : ${desc}
+        `);
+      });
+    });
+
+  </script>
+</body>
+</html>
